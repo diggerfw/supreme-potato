@@ -12,6 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
+        <TextView
+            android:background="@color/colorAccent"
+            android:padding="10dp"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:text="GHGHGHHGHGHGHGHGHGHG"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
