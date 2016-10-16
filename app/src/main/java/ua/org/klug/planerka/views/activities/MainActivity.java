@@ -1,6 +1,8 @@
 package ua.org.klug.planerka.views.activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -37,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.toolbar_collapsing);
+        collapsingToolbarLayout.setTitle("TITLE_TITLE-TITLE-TITLE");
+        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.RED);
+        collapsingToolbarLayout.setExpandedTitleColor(Color.GREEN);
 
         recyclerView = (RecyclerView) findViewById(R.id.list_actions);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
