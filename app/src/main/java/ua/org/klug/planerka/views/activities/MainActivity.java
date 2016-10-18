@@ -1,6 +1,9 @@
 package ua.org.klug.planerka.views.activities;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +16,9 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +38,31 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        final View coordinator = findViewById(R.id.coordinator);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                coordinator.buildDrawingCache(true);
+                Bitmap bitmap = coordinator.getDrawingCache(true).copy(Bitmap.Config.ARGB_8888, false);
+                coordinator.destroyDrawingCache();
+                try {
+                    String path = getCacheDir() + "file1.jpeg";
+                    FileOutputStream out = new FileOutputStream(path);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+                    emailIntent.setType("image/*");
+                    emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "email subject");
+                    emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "your opinion wery important to us");
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content:///" + path));
+                    emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    emailIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    startActivityForResult(Intent.createChooser(emailIntent, "you must choose"), 1);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
