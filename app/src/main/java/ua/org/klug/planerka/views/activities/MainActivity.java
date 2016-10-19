@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,6 +16,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.GeoDataApi;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.PlacePhotoMetadata;
+import com.google.android.gms.location.places.PlacePhotoMetadataResult;
+import com.google.android.gms.location.places.PlacePhotoResult;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,50 +44,71 @@ import ua.org.klug.planerka.R;
 import ua.org.klug.planerka.model.Meeting;
 import ua.org.klug.planerka.views.adapters.MeetingsAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    private final String KOLOSS_ID = "ChIJ-WsTpTWhJ0ERylq6-OKhL_4";
     private RecyclerView recyclerView;
     private MeetingsAdapter adapter;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final View coordinator = findViewById(R.id.coordinator);
+        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.toolbar_collapsing);
+        collapsingToolbarLayout.setTitle("TITLE_TITLE-TITLE-TITLE");
+        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.RED);
+        collapsingToolbarLayout.setExpandedTitleColor(Color.GREEN);
+
+        final ImageView image = (ImageView) findViewById(R.id.image);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                coordinator.buildDrawingCache(true);
-                Bitmap bitmap = coordinator.getDrawingCache(true).copy(Bitmap.Config.ARGB_8888, false);
-                coordinator.destroyDrawingCache();
-                try {
-                    String path = getCacheDir() + "file1.jpeg";
-                    FileOutputStream out = new FileOutputStream(path);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                    Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-                    emailIntent.setType("image/*");
-                    emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "email subject");
-                    emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "your opinion wery important to us");
-                    emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content:///" + path));
-                    emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    emailIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    startActivityForResult(Intent.createChooser(emailIntent, "you must choose"), 1);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                int PLACE_PICKER_REQUEST = 1;
+
+                Places.GeoDataApi.getPlaceById(mGoogleApiClient, KOLOSS_ID).setResultCallback(new ResultCallback<PlaceBuffer>() {
+                    @Override
+                    public void onResult(@NonNull PlaceBuffer places) {
+                        Place place = places.get(0);
+                        String name = String.valueOf(place.getName());
+                        collapsingToolbarLayout.setTitle(name);
+                        String address = String.valueOf(place.getAddress());
+                        String phoneNumber = String.valueOf(place.getPhoneNumber());
+                        String locale = String.valueOf(place.getLocale());
+                        places.release();
+                    }
+                });
+
+                Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, KOLOSS_ID).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
+                    @Override
+                    public void onResult(@NonNull PlacePhotoMetadataResult placePhotoMetadataResult) {
+                        PlacePhotoMetadata placePhotoMetadata = placePhotoMetadataResult.getPhotoMetadata().get(2);
+                        placePhotoMetadata.getPhoto(mGoogleApiClient).setResultCallback(new ResultCallback<PlacePhotoResult>() {
+                            @Override
+                            public void onResult(@NonNull PlacePhotoResult placePhotoResult) {
+                                image.setImageBitmap(placePhotoResult.getBitmap());
+                            }
+                        });
+
+                        placePhotoMetadataResult.getPhotoMetadata().release();;
+                    }
+                });
             }
         });
 
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.toolbar_collapsing);
-        collapsingToolbarLayout.setTitle("TITLE_TITLE-TITLE-TITLE");
-        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.RED);
-        collapsingToolbarLayout.setExpandedTitleColor(Color.GREEN);
 
         recyclerView = (RecyclerView) findViewById(R.id.list_actions);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -132,5 +171,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(this, "google service connection failed", Toast.LENGTH_LONG).show();
     }
 }
