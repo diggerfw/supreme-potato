@@ -39,7 +39,7 @@
                     android:layout_height="match_parent"
                     android:fitsSystemWindows="true"
                     android:scaleType="fitCenter"
-                    android:src="@{presenter"
+                    android:src="@{presenter.placePhoto}"
                     app:layout_collapseMode="parallax"/>
 
                 <android.support.v7.widget.Toolbar
