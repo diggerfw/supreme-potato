@@ -3,11 +3,8 @@ package ua.org.klug.planerka.views.controllers;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 
 import com.android.databinding.library.baseAdapters.BR;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -20,36 +17,26 @@ import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
 
 import ua.org.klug.planerka.R;
+import ua.org.klug.planerka.model.Meeting;
+import ua.org.klug.planerka.repositories.PlaceRepository;
 
 public class MainPresenter extends BaseObservable {
     private final String KOLOSS_ID = "ChIJ-WsTpTWhJ0ERylq6-OKhL_4";
 
 
-    private String mTitle;
-    private Drawable mPlacePhoto;
+    private Bitmap mPlacePhoto;
+    private Meeting mMeeting;
     private @DrawableRes int mPlacePhotoPlaceholder = R.mipmap.ic_launcher;
+    private PlaceRepository mPlaceRepository;
 
     private GoogleApiClient mGoogleApiClient;
 
-    public MainPresenter(GoogleApiClient googleApiClient) {
+    public MainPresenter(GoogleApiClient googleApiClient, PlaceRepository placeRepository) {
         mGoogleApiClient = googleApiClient;
-        getPlaceInfo();
+        mPlaceRepository.get
         receivePlacePhoto();
     }
 
-    private void getPlaceInfo() {
-        Places.GeoDataApi.getPlaceById(mGoogleApiClient, KOLOSS_ID).
-                setResultCallback(new ResultCallback<PlaceBuffer>() {
-                                      @Override
-                                      public void onResult(@NonNull PlaceBuffer places) {
-                                          Place place = places.get(0);
-                                          setTitle(String.valueOf(place.getName()));
-                                          places.release();
-                                      }
-                                  }
-
-                );
-    }
 
     private void receivePlacePhoto() {
         Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, KOLOSS_ID).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
@@ -59,35 +46,37 @@ public class MainPresenter extends BaseObservable {
                 placePhotoMetadata.getPhoto(mGoogleApiClient).setResultCallback(new ResultCallback<PlacePhotoResult>() {
                     @Override
                     public void onResult(@NonNull PlacePhotoResult placePhotoResult) {
-                        //image.setImageBitmap(placePhotoResult.getBitmap());
-                        //setPlacePhoto(placePhotoResult.getBitmap());
+                        setPlacePhoto(placePhotoResult.getBitmap());
                     }
                 });
-
                 placePhotoMetadataResult.getPhotoMetadata().release();
-                ;
             }
         });
     }
 
     @Bindable
-    public String getTitle() {
-        return mTitle;
+    public Meeting getMeeting() {
+        return mMeeting;
     }
 
-    public void setTitle(String title) {
-        mTitle = title;
-        notifyPropertyChanged(BR.title);
+    public void setMeeting(Meeting meeting) {
+        mMeeting = meeting;
+        notifyPropertyChanged(BR.meeting);
     }
 
     @Bindable
-    public Drawable getPlacePhoto() {
+    public Bitmap getPlacePhoto() {
         return mPlacePhoto;
     }
 
     public void setPlacePhoto(Bitmap bitmap) {
-        mPlacePhoto = new BitmapDrawable(bitmap);
+        mPlacePhoto = bitmap;
         notifyPropertyChanged(BR.placePhoto);
+    }
+
+    @Bindable
+    public int getPlaceholder() {
+        return R.mipmap.ic_launcher;
     }
 
 }

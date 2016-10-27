@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                app:title="@{presenter.title}"
+                app:title="@{presenter.meeting.were}"
                 app:contentScrim="@color/colorPrimary"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -39,7 +39,8 @@
                     android:layout_height="match_parent"
                     android:fitsSystemWindows="true"
                     android:scaleType="fitCenter"
-                    android:src="@{presenter.placePhoto}"
+                    app:bitmapImage="@{presenter.placePhoto}"
+                    app:placeholder="@{presenter.placeholder}"
                     app:layout_collapseMode="parallax"/>
 
                 <android.support.v7.widget.Toolbar

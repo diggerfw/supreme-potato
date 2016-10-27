@@ -80,36 +80,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mAdapter = new MeetingsAdapter();
         List<Meeting> meetings = new ArrayList<>();
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
-        meetings.add(new Meeting("Pivo - soki", "v pyatnizy"));
 
         mAdapter.setMeetings(meetings);
         mRecyclerView.setAdapter(mAdapter);

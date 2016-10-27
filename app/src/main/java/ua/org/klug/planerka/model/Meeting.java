@@ -1,19 +1,15 @@
 package ua.org.klug.planerka.model;
 
+import com.google.android.gms.location.places.Place;
+
 public class Meeting {
-    private String when;
-    private String where;
+    private String mWere;
 
-    public Meeting(String when, String where) {
-        this.when = when;
-        this.where = where;
+    public Meeting(Place place) {
+        mWere = String.valueOf(place.getName());
     }
 
-    public String getWhere() {
-        return where;
-    }
-
-    public String getWhen() {
-        return when;
+    public String getWere() {
+        return mWere;
     }
 }

@@ -54,8 +54,7 @@ public class MeetingsAdapter extends RecyclerView.Adapter<MeetingsAdapter.Meetin
         void bind(int position) {
             Meeting meeting = meetings.get(position);
 
-            whenText.setText(meeting.getWhen());
-            whereText.setText(meeting.getWhere());
+            whenText.setText(meeting.getWere());
         }
     }
 }

@@ -9,7 +9,11 @@ android {
             storePassword 'android'
         }
     }
-
+/*    defaultConfig {
+        jackOptions {
+            enabled = true
+        }
+    }*/
     dataBinding {
         enabled = true
     }
@@ -34,6 +38,10 @@ android {
             minifyEnabled false
         }
     }
+/*    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }*/
 }
 
 dependencies {
