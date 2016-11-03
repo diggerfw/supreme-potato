@@ -16,6 +16,7 @@ import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
 
+import rx.Subscriber;
 import ua.org.klug.planerka.R;
 import ua.org.klug.planerka.model.Meeting;
 import ua.org.klug.planerka.repositories.PlaceRepository;
@@ -33,7 +34,22 @@ public class MainPresenter extends BaseObservable {
 
     public MainPresenter(GoogleApiClient googleApiClient, PlaceRepository placeRepository) {
         mGoogleApiClient = googleApiClient;
-        mPlaceRepository.get
+        mPlaceRepository = placeRepository;
+        mPlaceRepository.getMeeting(new Subscriber<Meeting>() {
+            @Override
+            public void onCompleted() {
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(Meeting meeting) {
+                setMeeting(meeting);
+            }
+        });
         receivePlacePhoto();
     }
 

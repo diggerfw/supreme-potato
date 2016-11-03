@@ -32,6 +32,7 @@ import java.util.List;
 import ua.org.klug.planerka.R;
 import ua.org.klug.planerka.databinding.ActivityMainBinding;
 import ua.org.klug.planerka.model.Meeting;
+import ua.org.klug.planerka.repositories.PlaceRepository;
 import ua.org.klug.planerka.views.adapters.MeetingsAdapter;
 import ua.org.klug.planerka.views.controllers.MainPresenter;
 
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .enableAutoManage(this, this)
                 .build();
 
-        MainPresenter presenter = new MainPresenter(mGoogleApiClient);
+        MainPresenter presenter = new MainPresenter(mGoogleApiClient, new PlaceRepository(mGoogleApiClient));
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setPresenter(presenter);
 
