@@ -1,5 +1,6 @@
 package ua.org.klug.planerka.views.activities;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.google.android.gms.location.places.Places;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.schedulers.Schedulers;
 import ua.org.klug.planerka.R;
 import ua.org.klug.planerka.databinding.ActivityMainBinding;
 import ua.org.klug.planerka.model.Meeting;
@@ -111,5 +113,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(this, "google service connection failed", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

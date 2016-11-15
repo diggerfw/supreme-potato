@@ -4,19 +4,13 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.graphics.Bitmap;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.android.databinding.library.baseAdapters.BR;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.PlacePhotoMetadata;
-import com.google.android.gms.location.places.PlacePhotoMetadataResult;
-import com.google.android.gms.location.places.PlacePhotoResult;
-import com.google.android.gms.location.places.Places;
 
-import rx.Subscriber;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import ua.org.klug.planerka.R;
 import ua.org.klug.planerka.model.Meeting;
 import ua.org.klug.planerka.repositories.PlaceRepository;
@@ -35,40 +29,36 @@ public class MainPresenter extends BaseObservable {
     public MainPresenter(GoogleApiClient googleApiClient, PlaceRepository placeRepository) {
         mGoogleApiClient = googleApiClient;
         mPlaceRepository = placeRepository;
-        mPlaceRepository.getMeeting(new Subscriber<Meeting>() {
+
+        Action1<Throwable> errorAction = new Action1<Throwable>() {
             @Override
-            public void onCompleted() {
+            public void call(Throwable throwable) {
+                Log.d("tag", "ERROR");
             }
+        };
 
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(Meeting meeting) {
-                setMeeting(meeting);
-            }
-        });
-        receivePlacePhoto();
-    }
-
-
-    private void receivePlacePhoto() {
-        Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, KOLOSS_ID).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
-            @Override
-            public void onResult(@NonNull PlacePhotoMetadataResult placePhotoMetadataResult) {
-                PlacePhotoMetadata placePhotoMetadata = placePhotoMetadataResult.getPhotoMetadata().get(0);
-                placePhotoMetadata.getPhoto(mGoogleApiClient).setResultCallback(new ResultCallback<PlacePhotoResult>() {
+        mPlaceRepository
+                .getMeeting()
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<Meeting>() {
                     @Override
-                    public void onResult(@NonNull PlacePhotoResult placePhotoResult) {
-                        setPlacePhoto(placePhotoResult.getBitmap());
+                    public void call(Meeting meeting) {
+                        setMeeting(meeting);
+                    }
+
+                }, errorAction);
+        mPlaceRepository
+                .getPlaceBitmap()
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<Bitmap>() {
+                    @Override
+                    public void call(Bitmap bitmap) {
+                        setPlacePhoto(bitmap);
                     }
                 });
-                placePhotoMetadataResult.getPhotoMetadata().release();
-            }
-        });
     }
+
+
 
     @Bindable
     public Meeting getMeeting() {
