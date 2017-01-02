@@ -13,7 +13,7 @@ android {
         enabled = true
     }
     compileSdkVersion 25
-    buildToolsVersion "24.0.3"
+    buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "ua.org.klug.planerka"
         minSdkVersion 17
@@ -36,7 +36,7 @@ android {
 }
 
 dependencies {
-    def supportVersion = '25.0.0'
+    def supportVersion = '25.0.1'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:design:$supportVersion"

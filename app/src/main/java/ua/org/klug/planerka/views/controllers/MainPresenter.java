@@ -2,6 +2,8 @@ package ua.org.klug.planerka.views.controllers;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.databinding.generated.callback.OnClickListener;
+import android.databinding.generated.callback.OnViewAttachedToWindow;
 import android.graphics.Bitmap;
 import android.support.annotation.DrawableRes;
 import android.util.Log;
@@ -14,6 +16,7 @@ import rx.schedulers.Schedulers;
 import ua.org.klug.planerka.R;
 import ua.org.klug.planerka.model.Meeting;
 import ua.org.klug.planerka.repositories.PlaceRepository;
+import ua.org.klug.planerka.utils.Toasts;
 
 public class MainPresenter extends BaseObservable {
     private final String KOLOSS_ID = "ChIJ-WsTpTWhJ0ERylq6-OKhL_4";
@@ -58,7 +61,18 @@ public class MainPresenter extends BaseObservable {
                 });
     }
 
+    public void onFloatClick() {
+        Log.d("Click", "FLOAT CLICK");
+    }
 
+    public void onAttached(OnViewAttachedToWindow listener) {
+        Log.d("Click", "Attached");
+    }
+
+    @Bindable
+    public OnViewAttachedToWindow getAttachedListener() {
+        return new OnViewAttachedToWindow();
+    }
 
     @Bindable
     public Meeting getMeeting() {
